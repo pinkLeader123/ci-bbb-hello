@@ -1,4 +1,4 @@
-name: Build Hello World
+name: Cross-compile for BBB
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-arm:
     runs-on: ubuntu-latest
 
     steps:
@@ -15,13 +15,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Compile với gcc (x86 build trước)
-      - name: Build hello.c
-        run: gcc hello.c -o hello
+      # 2. Cài đặt ARM toolchain
+      - name: Install ARM cross compiler
+        run: sudo apt-get update && sudo apt-get install -y gcc-arm-linux-gnueabihf
 
-      # 3. Upload artifact
-      - name: Upload binary
+      # 3. Build hello.c cho ARM
+      - name: Cross compile hello.c
+        run: arm-linux-gnueabihf-gcc hello.c -o hello.elf
+
+      # 4. Upload artifact (.elf)
+      - name: Upload ARM binary
         uses: actions/upload-artifact@v4
         with:
-          name: hello-binary
-          path: hello
+          name: hello-arm-binary
+          path: hello.elf
