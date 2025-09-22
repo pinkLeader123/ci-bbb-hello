@@ -1,0 +1,27 @@
+name: Build Hello World
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Lấy source code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Compile với gcc (x86 build trước)
+      - name: Build hello.c
+        run: gcc hello.c -o hello
+
+      # 3. Upload artifact
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: hello-binary
+          path: hello
